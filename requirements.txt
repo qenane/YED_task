@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pymongo
+pandas
+joblib
+scikit-learn
+
+numpy
+
+paho-mqtt
+torch

@@ -1,0 +1,11 @@
+version: "2"
+authtoken: ${NGROK_AUTHTOKEN}
+web_addr: 0.0.0.0:4040
+log_level: info
+tunnels:
+  api-http:
+    proto: http
+    addr: backend:8000
+  mqtt-tcp:
+    proto: tcp
+    addr: mqtt:1883

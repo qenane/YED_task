@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pymongo>=4.3
+numpy
+pandas
+scikit-learn
+paho-mqtt
+python-multipart
+python-dotenv
