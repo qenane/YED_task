@@ -27,9 +27,8 @@ Metrikler ve Raporlama
 
 Sınırlamalar & Notlar
 
-Sık Karşılaşılan Sorunlar
 
-##Mimari
+#Mimari
 [React+NGINX]  <--->  [FastAPI Backend]  <--->  [MongoDB(GridFS)]
        ^                        ^
        |                        |-- subscribes: yed/battery/+/telemetry (MQTT)
@@ -47,7 +46,7 @@ MQTT: Telemetry alımı (ham ölçümler) ve prediction yayını
 
 Frontend (React/NGINX): Form + grafikler (tarih bazlı soc_cycle_true & soc_cycle_pred çizgileri, seçili cycle için SOC panelleri)
 
-Özellikler
+#Özellikler
 
 Çoklu girdi: voltage_V, temperature_C, time_s (+ opsiyonel voltage_load_V, current_load_A ve/veya capacity_Ah)
 
@@ -87,7 +86,7 @@ Ham zaman serisi: {DATASET}_timeseries (ör. B0005_timeseries)
 
 Not: Sistem, eğitim/test split bilgisini model meta verisine yazar.
 
-##Model ve Eğitim
+#Model ve Eğitim
 Eğitim script’i
 
 train_curr_cap.py (güncellenmiş sürüm) – başlıklar:
@@ -115,7 +114,7 @@ python train_curr_cap.py ^
 
 --alpha: kapasite kaybının ağırlığı (loss = MSE(I) + α·MSE(cap))
 
-##Eğitim/Değerlendirme Çıktıları
+#Eğitim/Değerlendirme Çıktıları
 
 artifacts_seqsoc/test_results.json & test_results.csv
 
@@ -134,7 +133,7 @@ Model GridFS metadata:
   "metrics": {"rmse_I": ..., "rmse_cap": ..., "best_score": ...}
 }
 
-##Docker ile Çalıştırma
+#Docker ile Çalıştırma
 #1) Ortam Değişkenleri
 
 Backend CORS için frontend URL’si: http://localhost:5173
@@ -173,7 +172,7 @@ curl http://localhost:8000/datasets
 # Frontend
 http://localhost:5173
 
-MQTT Test Senaryosu
+#MQTT Test Senaryosu
 
 Amaç: Eğitim B0005/6/18 ile yapılmış modeli, B0007 telemetri yayını gelince test etmek.
 
@@ -191,7 +190,7 @@ Subscribe (gözlem)
 docker exec -it mqtt sh -lc 'apk add --no-cache mosquitto-clients >/dev/null && \
 mosquitto_sub -h localhost -p 1883 -t "yed/battery/B0007/predictions" -v'
 
-REST API
+#REST API
 GET /datasets
 
 Mevcut dataset isimlerini döner (backend, model meta verisini kontrol ederek test set’in eğitime seçilmesini engeller).
@@ -232,7 +231,7 @@ Yanıt (kısaltılmış):
   ]
 }
 
-Frontend
+#Frontend
 
 PredictForm.jsx: VITE_API_BASE üzerinden POST /predict çağırır.
 NGINX imajında build çıktısı otomatik kopyalanır.
@@ -245,7 +244,7 @@ Altta seçili cycle için SOC(t) panelleri
 
 CORS: Backend CORSMiddleware ile http://localhost:5173 izinlidir.
 
-Ngrok (Opsiyonel)
+#Ngrok (Opsiyonel)
 
 ngrok.yml:
 
@@ -263,7 +262,7 @@ tunnels:
 
 Çalışan tünelleri görmek için: http://localhost:4040
 
-Metrikler ve Raporlama
+#Metrikler ve Raporlama
 
 Eğitim sonunda metrics.json ve GridFS metadata doldurulur:
 
@@ -275,7 +274,7 @@ Backend, /predict sonuçlarıyla birlikte history alanında tüm cycle’ların 
 
 artifacts_seqsoc/test_results.(csv|json)
 
-Sınırlamalar & Notlar
+#Sınırlamalar & Notlar
 
 MQTT payload formatı JSON ve tek satır olmalı. \ kaçışlarına dikkat.
 
