@@ -1,4 +1,4 @@
-YED Battery SOC — End-to-End Demo
+# YED Battery SOC — End-to-End Demo 
 
 Bu repo; FastAPI backend + MQTT entegrasyonu + React/NGINX frontend + MongoDB + Mosquitto + Ngrok ile, batarya deşarj verilerinden akım dalgası (I[t]) ve cycle kapasitesi (Ah) tahmini yapan ve SOC (state of charge) eğrilerini hesaplayıp görselleştiren uçtan uca bir demo içerir.
 Amaç: Bir batarya setiyle eğitilen modelin başka bataryaların MQTT üzerinden yayınlanan verileriyle test edilebildiğini göstermek (case gereksinimi).
@@ -28,7 +28,7 @@ Metrikler ve Raporlama
 Sınırlamalar & Notlar
 
 
-#Mimari
+# Mimari
 [React+NGINX]  <--->  [FastAPI Backend]  <--->  [MongoDB(GridFS)]
        ^                        ^
        |                        |-- subscribes: yed/battery/+/telemetry (MQTT)
@@ -46,7 +46,7 @@ MQTT: Telemetry alımı (ham ölçümler) ve prediction yayını
 
 Frontend (React/NGINX): Form + grafikler (tarih bazlı soc_cycle_true & soc_cycle_pred çizgileri, seçili cycle için SOC panelleri)
 
-#Özellikler
+# Özellikler
 
 Çoklu girdi: voltage_V, temperature_C, time_s (+ opsiyonel voltage_load_V, current_load_A ve/veya capacity_Ah)
 
@@ -68,7 +68,7 @@ Tarih çizgisi: Tüm cycle’lar için true & predicted SOC_cycle zaman çizgisi
 
 Eğitim/Test Ayrımı Koruması: Model GridFS meta verisiyle hangi dataset’lerle eğitildiği ve hangi dataset’in test olduğu kayıtlıdır; backend UI’da test set seçilemez.
 
-#Veri Kümeleri
+# Veri Kümeleri
 
 Case’de geçen 4 dataset: B0005, B0006, B0018, B0007
 
@@ -86,7 +86,7 @@ Ham zaman serisi: {DATASET}_timeseries (ör. B0005_timeseries)
 
 Not: Sistem, eğitim/test split bilgisini model meta verisine yazar.
 
-#Model ve Eğitim
+# Model ve Eğitim
 Eğitim script’i
 
 train_curr_cap.py (güncellenmiş sürüm) – başlıklar:
@@ -106,15 +106,15 @@ python train_curr_cap.py ^
   --train_colls B0005_timeseries B0006_timeseries B0018_timeseries ^
   --test_coll B0007_timeseries ^
   --seq_len 256 ^
-  --use_load            # load ölçüleri varsa ekler
-  --load_cap            # cap'i feature olarak ekler
+  --use_load            #  load ölçüleri varsa ekler
+  --load_cap            #  cap'i feature olarak ekler
   --hidden 128 --layers 2 --dropout 0.3 ^
   --batch_size 16 --epochs 50 --lr 1e-3 --alpha 10.0
 
 
 --alpha: kapasite kaybının ağırlığı (loss = MSE(I) + α·MSE(cap))
 
-#Eğitim/Değerlendirme Çıktıları
+# Eğitim/Değerlendirme Çıktıları
 
 artifacts_seqsoc/test_results.json & test_results.csv
 
@@ -133,8 +133,8 @@ Model GridFS metadata:
   "metrics": {"rmse_I": ..., "rmse_cap": ..., "best_score": ...}
 }
 
-#Docker ile Çalıştırma
-#1) Ortam Değişkenleri
+# Docker ile Çalıştırma
+# 1) Ortam Değişkenleri
 
 Backend CORS için frontend URL’si: http://localhost:5173
 
@@ -148,7 +148,7 @@ MQTT_PORT=1883
 
 (Opsiyonel) NGROK_AUTHTOKEN=...
 
-#2) Compose
+#  2) Compose
 docker compose up -d --build
  veya ilk kurulum sonrası:
 docker compose up -d
@@ -167,12 +167,12 @@ frontend (NGINX) → 5173
 ngrok (opsiyonel UI: 4040)
 
 3) Sağlık Kontrolü
-# Backend dataset listesi
+#  Backend dataset listesi
 curl http://localhost:8000/datasets
-# Frontend
+#  Frontend
 http://localhost:5173
 
-#MQTT Test Senaryosu
+# MQTT Test Senaryosu
 
 Amaç: Eğitim B0005/6/18 ile yapılmış modeli, B0007 telemetri yayını gelince test etmek.
 
@@ -190,7 +190,7 @@ Subscribe (gözlem)
 docker exec -it mqtt sh -lc 'apk add --no-cache mosquitto-clients >/dev/null && \
 mosquitto_sub -h localhost -p 1883 -t "yed/battery/B0007/predictions" -v'
 
-#REST API
+# REST API
 GET /datasets
 
 Mevcut dataset isimlerini döner (backend, model meta verisini kontrol ederek test set’in eğitime seçilmesini engeller).
@@ -231,7 +231,7 @@ Yanıt (kısaltılmış):
   ]
 }
 
-#Frontend
+# Frontend
 
 PredictForm.jsx: VITE_API_BASE üzerinden POST /predict çağırır.
 NGINX imajında build çıktısı otomatik kopyalanır.
@@ -244,7 +244,7 @@ Altta seçili cycle için SOC(t) panelleri
 
 CORS: Backend CORSMiddleware ile http://localhost:5173 izinlidir.
 
-#Ngrok (Opsiyonel)
+# Ngrok (Opsiyonel)
 
 ngrok.yml:
 
@@ -262,7 +262,7 @@ tunnels:
 
 Çalışan tünelleri görmek için: http://localhost:4040
 
-#Metrikler ve Raporlama
+# Metrikler ve Raporlama
 
 Eğitim sonunda metrics.json ve GridFS metadata doldurulur:
 
@@ -274,7 +274,7 @@ Backend, /predict sonuçlarıyla birlikte history alanında tüm cycle’ların 
 
 artifacts_seqsoc/test_results.(csv|json)
 
-#Sınırlamalar & Notlar
+# Sınırlamalar & Notlar
 
 MQTT payload formatı JSON ve tek satır olmalı. \ kaçışlarına dikkat.
 
